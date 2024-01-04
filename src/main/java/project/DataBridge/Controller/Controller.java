@@ -98,9 +98,11 @@ public class Controller {
 		isAllowed=val;
 	}
 
+	Timer time= new Timer();
 	@GetMapping("/{password}/stop")
 	public String blockAll(@PathVariable String password){
 		if(password.equals(this.pass)){
+			time.setThreadPermission(false);
 			setIsAllowed(false);return "All Permissions Revoked!";}else
 		{return "Wrong Password";}
 	}
@@ -108,7 +110,8 @@ public class Controller {
 	@GetMapping("/{password}/{attempt}")
 	public String allowEveryone(@PathVariable String password, @PathVariable int attempt){
 		if(password.equals(this.pass)){
-			Timer time= new Timer(attempt);
+			time.setMaxAttempts(attempt);
+			time.setThreadPermission(true);
 			Thread th= new Thread(time);
 			th.start();
 			setIsAllowed(true);

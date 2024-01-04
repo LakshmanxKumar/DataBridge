@@ -5,7 +5,10 @@ import project.DataBridge.Controller.Controller;
 public class Timer implements Runnable {
     public volatile boolean threadPermission=true;
     int maxAttempts=3;
-    public Timer(int maxAttempts){this.maxAttempts=maxAttempts;}
+
+    public void setMaxAttempts(int maxAttempts) {
+        this.maxAttempts = maxAttempts;
+    }
 
     @Override
     public  void run(){

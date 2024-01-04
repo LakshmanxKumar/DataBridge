@@ -1,4 +1,4 @@
-# Created at 2024-01-04T22:27:02.302
+# Created at 2024-01-05T01:05:11.906
 Boot Manifest-JAR contains absolute paths in classpath 'D:\My Coding Space\DataBridge\target\test-classes'
 Hint: <argLine>-Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
 'other' has different root
