@@ -1,0 +1,7 @@
+project\DataBridge\Services\DownloadingFile.class
+project\DataBridge\Services\Timer.class
+project\DataBridge\DataBridgeApplication.class
+project\DataBridge\Services\FireBaseConnector.class
+project\DataBridge\Services\UploadingFiles.class
+project\DataBridge\Controller\Controller.class
+project\DataBridge\Services\StorageConnector.class
