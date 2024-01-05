@@ -2,6 +2,7 @@ package project.DataBridge.Controller;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -31,14 +32,22 @@ public class Controller {
 	
 	@Autowired
 	private UploadingFiles uploader;
+
+	private int requests=0;
+
+	@GetMapping("/calls")
+	public int getNoOfRequests(){
+		return this.requests;}
 	
 	@GetMapping("/ping")
 	public ResponseEntity<String> ping() {
+		requests++;
 		return ResponseEntity.ok("Api is alive");
 	}
 	
 	@GetMapping("/view")
 	public ResponseEntity<Resource> view() throws IOException {
+		requests++;
 		if(this.isAllowed) {
 			String last = downloader.getLastFileName();
 			Resource res = downloader.readFile(last);
@@ -54,6 +63,7 @@ public class Controller {
 	
 	@GetMapping("/download")
 	public ResponseEntity<Resource> download() throws IOException {
+		requests++;
 		if(isAllowed) {
 			String last = downloader.getLastFileName();
 			if (last.equals("No last upload Using this API")) {
@@ -73,6 +83,7 @@ public class Controller {
 	
 	@GetMapping("/download/{filename}")
 	public ResponseEntity<Resource> downloadfile(@PathVariable String filename) {
+		requests++;
 		if(isAllowed){
 		Resource res;
 		if(downloader.doesFileExists(filename)) {
@@ -101,14 +112,21 @@ public class Controller {
 	Timer time= new Timer();
 	@GetMapping("/{password}/stop")
 	public String blockAll(@PathVariable String password){
+		requests++;
 		if(password.equals(this.pass)){
 			time.setThreadPermission(false);
-			setIsAllowed(false);return "All Permissions Revoked!";}else
+//			setIsAllowed(false);
+			return "All Permissions Revoked!";}else
 		{return "Wrong Password";}
 	}
 
 	@GetMapping("/{password}/{attempt}")
 	public String allowEveryone(@PathVariable String password, @PathVariable int attempt){
+		requests++;
+		time.setThreadPermission(false);
+		try{
+		Thread.sleep(1100);}catch (Exception e){System.out.println("Controller thread sleep failed!");}
+		time.setThreadPermission(true);
 		if(password.equals(this.pass)){
 			time.setMaxAttempts(attempt);
 			time.setThreadPermission(true);
@@ -123,6 +141,7 @@ public class Controller {
 	@PostMapping("/upload")
     public ResponseEntity<String> handleFileUpload(
             @RequestParam("file") MultipartFile file)throws IOException {
+		requests++;
 		if(isAllowed){
         System.out.println("Received file: " + file.getOriginalFilename());
 			uploader.upload(file, file.getOriginalFilename());
@@ -132,6 +151,7 @@ public class Controller {
 	
 	@GetMapping("/list")
 	public List<List<String>> getFileList() {
+		requests++;
 		if(isAllowed){
 		return downloader.listOfBlob();}else{return  null;}
 	}
