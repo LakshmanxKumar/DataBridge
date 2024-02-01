@@ -2,15 +2,12 @@ package project.DataBridge.Controller;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.core.io.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.ResponseEntity.HeadersBuilder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,26 +26,27 @@ public class Controller {
 	String pass;
 	@Autowired
 	private DownloadingFile downloader;
-	
+
 	@Autowired
 	private UploadingFiles uploader;
 
+	public static Boolean isAllowed=false;
 	private int requests=0;
 
 	@GetMapping("/calls")
 	public int getNoOfRequests(){
 		return this.requests;}
-	
+
 	@GetMapping("/ping")
 	public ResponseEntity<String> ping() {
 		requests++;
 		return ResponseEntity.ok("Api is alive");
 	}
-	
+
 	@GetMapping("/view")
 	public ResponseEntity<Resource> view() throws IOException {
 		requests++;
-		if(this.isAllowed) {
+		if(isAllowed) {
 			String last = downloader.getLastFileName();
 			Resource res = downloader.readFile(last);
 			HttpHeaders headers = new HttpHeaders();
@@ -60,7 +58,7 @@ public class Controller {
 					.body(res);
 		}else{return  null;}
 	}
-	
+
 	@GetMapping("/download")
 	public ResponseEntity<Resource> download() throws IOException {
 		requests++;
@@ -80,7 +78,20 @@ public class Controller {
 			}
 		}else{return null;}
 	}
-	
+
+	@GetMapping("/delete/{filename}")
+	public ResponseEntity<Void> deleteFile(@PathVariable String filename) {
+		requests++;
+		if(isAllowed){
+			if(downloader.deleteFile(filename)){
+				return ResponseEntity.ok().build();
+			}else{
+				return ResponseEntity.badRequest().build();
+			}
+
+		}else{return  null;}
+	}
+
 	@GetMapping("/download/{filename}")
 	public ResponseEntity<Resource> downloadfile(@PathVariable String filename) {
 		requests++;
@@ -95,7 +106,7 @@ public class Controller {
 		HttpHeaders headers = new HttpHeaders();
 	    headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename="+filename);
 	    String type=downloader.getcontentType();
-	    headers.setContentType(MediaType.valueOf(type));		
+	    headers.setContentType(MediaType.valueOf(type));
 		 return ResponseEntity.ok()
 		            .headers(headers)
 		            .body(res);
@@ -103,7 +114,6 @@ public class Controller {
 			return null;
 		}}else{return  null;}
 	}
-	public static Boolean isAllowed=false;
 
 	public static void setIsAllowed(boolean val){
 		isAllowed=val;

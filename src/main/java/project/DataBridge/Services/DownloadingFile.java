@@ -119,6 +119,19 @@ public class DownloadingFile {
 		}catch (Exception e) {return false;}
         		
 	}
+
+	// delete method
+	public boolean deleteFile(String fileName){
+		if(doesFileExists(fileName)){
+			Storage storage = connection.getStorage();
+			try{
+				BlobId id =BlobId.of(bucketName,fileName);
+				storage.delete(id);
+				return  true;
+			}catch (Exception e) {return false;}
+		}return  false;
+
+	}
 	
 	
 	

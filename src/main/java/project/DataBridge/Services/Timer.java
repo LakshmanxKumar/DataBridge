@@ -5,7 +5,7 @@ import project.DataBridge.Controller.Controller;
 public class Timer implements Runnable {
     private volatile boolean threadPermission=true;
 
-    private int min=60*1000;
+    private final int min=60*1000;
     private int maxAttempts=3*min;
 
     public void setMaxAttempts(int maxAttempts) {
