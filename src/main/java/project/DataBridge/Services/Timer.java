@@ -5,20 +5,20 @@ import project.DataBridge.Controller.Controller;
 public class Timer implements Runnable {
     private volatile boolean threadPermission=true;
 
-    private final int min=60*1000;
-    private int maxAttempts=3*min;
+//    private final int min=60;
+    private int mins=1;
 
-    public void setMaxAttempts(int maxAttempts) {
-        this.maxAttempts = maxAttempts*this.min;
+    public void setMins(int mins) {
+        this.mins = mins*60;
     }
 
-    int calls=0;
+//    int calls=0;
 
     @Override
     public  void run(){
-        calls++;
-        int attmepts=0;
-        while (threadPermission && maxAttempts>attmepts++){
+//        calls++;
+        int min=0;
+        while (threadPermission && mins>min++){
             try{
                 // 5min in one attmepts
             Thread.sleep(1000);}catch(Exception e){System.out.println("Timer failed!");}

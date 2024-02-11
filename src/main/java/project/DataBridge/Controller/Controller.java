@@ -130,15 +130,15 @@ public class Controller {
 		{return "Wrong Password";}
 	}
 
-	@GetMapping("/{password}/{attempt}")
-	public String allowEveryone(@PathVariable String password, @PathVariable int attempt){
+	@GetMapping("/{password}/{timeMin}")
+	public String allowEveryone(@PathVariable String password, @PathVariable int timeMin){
 		requests++;
 		time.setThreadPermission(false);
 		try{
 		Thread.sleep(1100);}catch (Exception e){System.out.println("Controller thread sleep failed!");}
 		time.setThreadPermission(true);
 		if(password.equals(this.pass)){
-			time.setMaxAttempts(attempt);
+			time.setMins(timeMin);
 			time.setThreadPermission(true);
 			Thread th= new Thread(time);
 			th.start();
